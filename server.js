@@ -17,9 +17,7 @@ app.use(webRouter);
 app.use(apiRouter);
 
 
-console.log(`Directory Name is ${__dirname}`);
-
 // open port
 app.listen(PORT, function () {
-  console.log(`Server is currently running on https://localhost:${PORT}`);
+  console.log(`Server is currently running on http://localhost:${PORT}`);
 });
