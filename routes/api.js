@@ -1,90 +1,53 @@
+// Define required modules
 const express = require('express');
-const path = require('path');
 const router = express.Router();
+const path = require('path');
 const fs = require('fs');
 const { v4 } = require('uuid');
-const { readDataFile, addContent } = require('../helpers/fsUtils');
 
+const { readDataFile, addContent, writeToFile } = require('../helpers/fsUtils');
+
+// Specify location of the data file that holds the notes
 const pathDb = path.join(__dirname, '..', 'db', 'db.json');
 
 
-
-function getNotes(){
-  return JSON.parse(fs.readFileSync(pathDb, 'utf8'));
-}
-
-function saveNotesToDb(notes){
-
-  fs.writeFileSync(pathDb
-  , JSON.stringify(notes), 'utf8');
-}
-
-
-
+// GET route for getting existing notes
 router.get('/api/notes', (req, res) => {
-  
-
-  // res.json(getNotes())
   res.json(readDataFile(pathDb))
-
-
 });
 
 
+// POST route for writing a new note
 router.post('/api/notes', (req, res) => {
-
-  // create a new note
-  console.log(req.body);
-
-  // read the req body for the note title & text
-  // const title = req.body.title;
-  // const text = req.body.text;
+  // Retrieve note title and text from req.body
   const {title, text} = req.body;
 
-
-  // generate an ID to the new note
+  // Create new note with unique ID generated using uuid
   const newNote = {
     id: v4(),
-    // title: title,
-    title,  // same as above
+    title: title,
     text: text,
   }
-
-  // save the new note to the ene of the existing note array
+  // Save the new note to the top of the list
   addContent(newNote, pathDb);
+  // Return the data file with the new note added
   res.json(readDataFile(pathDb))
-  // const notes = getNotes();
-
-  // notes.push(newNote);
-
-  // saveNotesToDb(notes);
-
-  // res.json({
-  //   data: 'ok',
-  // })
-
-
-
 });
 
+
+// DELETE route for removing a note
 router.delete('/api/notes/:id', (req, res) => {
 
-  // get all the notes
-  const notes = getNotes();
-
-
-  // filter out the target note
+  // read the data file
+  const notes = readDataFile(pathDb);
+  // filter out the target id
   const result = notes.filter((note) => {
     return note.id !== req.params.id
   });
-
-  // resave to db
-  saveNotesToDb(result);
-
-  res.json({
-    data: 'ok',
-  })
-
+  // Save the result to the file
+  writeToFile(pathDb, result);
+  // Return the data file with the note removed
+  res.json(readDataFile(pathDb))
 })
 
 

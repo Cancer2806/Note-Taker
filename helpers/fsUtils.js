@@ -1,15 +1,15 @@
-// Required modules
+// Define required modules
 const fs = require('fs');
 const util = require('util');
 
 
-// read Data File
+// Function to read the data file
 // const readDataFile = (fileName) => util.promisify(fs.readFile(fileName));
 const readDataFile = (fileName) => {
   return JSON.parse(fs.readFileSync(fileName, 'utf8'))
 }
 
-// function to write data to file
+// Function to write the data file to disk
 const writeToFile = (fileName, data) => {
   fs.writeFile(fileName, JSON.stringify(data),
     (err) =>
@@ -17,20 +17,22 @@ const writeToFile = (fileName, data) => {
   );
 }
 
-
-// function to read in a data file and add new content
+// Function to add new data to a data file
 const addContent = (newData, fileName) => {
   fs.readFile(fileName, 'utf8', (err, data) => {
     if (err) {
       console.error(err);
     } else {
-      const parsedData = JSON.parse(data);
-      parsedData.push(newData);
-      writeToFile(fileName, parsedData);
+      const fileData = JSON.parse(data);
+      fileData.unshift(newData);
+      writeToFile(fileName, fileData);
     }
   })
 }
 
 
+// Function to remove data from the data file
+
+
 // module export
-module.exports = { readDataFile, addContent };
+module.exports = { readDataFile, addContent, writeToFile };
