@@ -1,23 +1,23 @@
-// Required Modules
 const express = require('express');
-const apiRouter = require('./routes/api');
 const webRouter = require('./routes/web');
+const apiRouter = require('./routes/api');
 
-
-// configure
 const app = express();
-const PORT = 3001; // Change to Heroku required format when ready to deploy
 
+// config
+const PORT = 3001;
+app.use( express.static('public'));
 
-// Middleware
-app.use(express.static('public'));
 app.use(express.json());
 
-app.use(webRouter);
+
 app.use(apiRouter);
+app.use(webRouter);
 
 
-// open port
-app.listen(PORT, function () {
-  console.log(`Server is currently running on http://localhost:${PORT}`);
+
+
+app.listen(PORT, function(){
+  console.log(`App is running on http://localhost:${PORT}`);
 });
+
