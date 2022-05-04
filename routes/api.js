@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const { v4 } = require('uuid');
 
-const { readDataFile, addContent, writeToFile } = require('../helpers/fsUtils');
+const { readDataFile, addContent, removeContent } = require('../helpers/fsUtils');
 
 // Specify location of the data file that holds the notes
 const pathDb = path.join(__dirname, '..', 'db', 'db.json');
@@ -37,22 +37,13 @@ router.post('/api/notes', (req, res) => {
 
 // DELETE route for removing a note
 router.delete('/api/notes/:id', (req, res) => {
-
-  // read the data file
-  const notes = readDataFile(pathDb);
-  // filter out the target id
-  const result = notes.filter((note) => {
-    return note.id !== req.params.id
-  });
-  // Save the result to the file
-  writeToFile(pathDb, result);
+  // retrieve specified note id
+  const delId = req.params.id;
+  // remove the specified note
+  removeContent(delId, pathDb);
   // Return the data file with the note removed
   res.json(readDataFile(pathDb))
-})
+});
 
-
-
-
-
-
+// export module
 module.exports = router;
